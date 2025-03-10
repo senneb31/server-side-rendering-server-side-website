@@ -9,14 +9,15 @@ import { Liquid } from 'liquidjs';
 console.log('Hieronder moet je waarschijnlijk nog wat veranderen')
 // Doe een fetch naar de data die je nodig hebt
 // const apiResponse = await fetch('...')
-
+const apiResponse = await fetch('https://fdnd-agency.directus.app/items/milledoni_products')
 // Lees van de response van die fetch het JSON object in, waar we iets mee kunnen doen
 // const apiResponseJSON = await apiResponse.json()
+const apiResponseJSON = await apiResponse.json()
 
 // Controleer eventueel de data in je console
 // (Let op: dit is _niet_ de console van je browser, maar van NodeJS, in je terminal)
 // console.log(apiResponseJSON)
-
+console.log(apiResponseJSON)
 
 // Maak een nieuwe Express applicatie aan, waarin we de server configureren
 const app = express()
@@ -37,7 +38,7 @@ app.set('views', './views')
 app.get('/', async function (request, response) {
    // Render index.liquid uit de Views map
    // Geef hier eventueel data aan mee
-   response.render('index.liquid')
+   response.render('index.liquid', { data: apiResponseJSON.data });
 })
 
 // Maak een POST route voor de index; hiermee kun je bijvoorbeeld formulieren afvangen
