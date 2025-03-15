@@ -9,15 +9,10 @@ import { Liquid } from 'liquidjs';
 console.log('Hieronder moet je waarschijnlijk nog wat veranderen')
 // Doe een fetch naar de data die je nodig hebt
 // const apiResponse = await fetch('...')
+
 const apiResponse = await fetch('https://fdnd-agency.directus.app/items/milledoni_products')
-// Lees van de response van die fetch het JSON object in, waar we iets mee kunnen doen
-// const apiResponseJSON = await apiResponse.json()
 const apiResponseJSON = await apiResponse.json()
 
-// Controleer eventueel de data in je console
-// (Let op: dit is _niet_ de console van je browser, maar van NodeJS, in je terminal)
-// console.log(apiResponseJSON)
-console.log(apiResponseJSON)
 
 // Maak een nieuwe Express applicatie aan, waarin we de server configureren
 const app = express()
@@ -36,9 +31,23 @@ app.set('views', './views')
 
 // Maak een GET route voor de index (meestal doe je dit in de root, als /)
 app.get('/', async function (request, response) {
-   // Render index.liquid uit de Views map
-   // Geef hier eventueel data aan mee
-   response.render('index.liquid', { data: apiResponseJSON.data });
+  // Geef hier eventueel data aan mee
+  response.render('index.liquid', { items: apiResponseJSON.data })
+})
+
+app.get('/cadeau/:slug', async function (request, response) {
+  const slug = request.params.slug;
+  const apiResponseCadeau = await fetch(`https://fdnd-agency.directus.app/items/milledoni_products?filter={"slug":"${slug}"}&limit=1`)
+
+  // Lees van de response van die fetch het JSON object in, waar we iets mee kunnen doen
+  const apiResponseCadeauJSON = await apiResponseCadeau.json()
+
+  // Controleer eventueel de data in je console
+  // (Let op: dit is _niet_ de console van je browser, maar van NodeJS, in je terminal)
+  // console.log(apiResponseJSON.data)
+  
+  // Geef hier eventueel data aan mee
+  response.render('cadeau.liquid', { item: apiResponseCadeauJSON.data[0], items: apiResponseJSON.data})
 })
 
 // Maak een POST route voor de index; hiermee kun je bijvoorbeeld formulieren afvangen
@@ -59,10 +68,7 @@ app.listen(app.get('port'), function () {
   console.log(`Application started on http://localhost:${app.get('port')}`)
 })
 
-const express = require('express')
-const app = express()
 
-// respond with "hello world" when a GET request is made to the homepage
-app.get('/hello', (req, res) => {
-  res.send('hello world')
+app.use((req, res, next) => {
+  res.status(404).send("Deze pagina bestaat niet!")
 })
